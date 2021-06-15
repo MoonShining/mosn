@@ -886,9 +886,10 @@ func (c *connection) Close(ccType api.ConnectionCloseType, eventType api.Connect
 		// unregister events while connection close
 		c.poll.eventLoop.unregisterRead(c)
 		// close copied fd
-		err := c.file.Close()
-		if err != nil {
-			log.DefaultLogger.Errorf("[network] [close connection] error, %v", err)
+		if c.file != nil {
+			if err := c.file.Close(); err != nil {
+				log.DefaultLogger.Errorf("[network] [close connection] error, %v", err)
+			}
 		}
 
 		c.poll.readTimeoutTimer.Stop()
